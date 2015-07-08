@@ -1,0 +1,26 @@
+mkdir ngram_classes
+
+javac -classpath hadoop-core.jar:hadoop-core-0.22.0-dev.jar:hadoop-mapred-0.22.0.jar -d  ngram_classes NGram.java
+javac -classpath hadoop-core.jar -d  ngram_classes NGram.java
+
+jar -cvf NGram.jar -C ngram_classes/ .
+
+mkdir input
+
+hadoop distcp s3://15-319-s13/book-dataset/ project/input
+
+hadoop jar NGram.jar edu.cmu.NGram project/input project/output
+hadoop fs -rmr project/output
+
+hadoop fs -get project/output output  
+
+
+
+parted /dev/xvdf mklabel gpt
+parted /dev/xvdf mkpart db ext4 0% 50G
+mkfs.ext4 /dev/xvdf
+mkdir /home/hadoop/output
+mount /dev/xvdf /home/hadoop/output
+
+
+
